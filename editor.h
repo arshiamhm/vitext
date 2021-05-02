@@ -10,11 +10,20 @@ typedef struct gap_buffer {
 	size_t presize; //size of the split buffer before the curser;
 } buffer;
 
-typedef struct {
-	struct doc *next;
-	struct doc *prev;
+typedef struct Line {
 	buffer *buf;
+	struct Line *next;
+	struct Line *prev;
 } Line; 
+
+struct editorconfig {
+	int cx, cy;
+	int screenrow;
+	int screencol;
+	Line *line;
+	int numrows;
+} Ed;
+// struct editorconfig Ed;
 
 //gap utility functions
 size_t gap_length(buffer *b);
@@ -30,7 +39,8 @@ void insert_char(buffer* b, char c);
 void delete_char(buffer *b);
 
 
-Line* line_init(void);
+Line* line_new(void);
+void line_add(Line *);
 
 
 

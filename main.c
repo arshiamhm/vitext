@@ -7,14 +7,6 @@
 
 #define Linebuf Ed.line->buf
 
-struct editorconfig {
-    int cx, cy;
-    int screenrow;
-    int screencol;
-    Line *line;
-    int numrows;
-} Ed;
-
 /* struct tempbuf { */
 /*     char *b; */
 /*     int len; */
@@ -41,7 +33,7 @@ void initEditor() {
     Ed.cy = 0;
     Ed.numrows = 1; 
     /* Ed.buf = buffer_new(3); */ 
-    Ed.line = line_init();
+    Ed.line = line_new();
     getmaxyx(stdscr, Ed.screenrow, Ed.screencol);
 }
 

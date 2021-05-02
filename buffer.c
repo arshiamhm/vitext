@@ -88,9 +88,13 @@ void delete_char(buffer *b) {
         b->presize--;
 }
 
-Line* line_init(void) {
+static Line* line_alloc() {
+    return (Line *)malloc(sizeof(Line));
+}
+
+Line* line_new(void) {
     Line* head;
-    head = (Line *)malloc(sizeof(Line));
+    head = line_alloc();
     
     if (head != NULL) {
         head->buf = buffer_new(5);
@@ -99,4 +103,24 @@ Line* line_init(void) {
     }
     
     return NULL;
+}
+
+void line_add(Line *lnode) {
+    Line *new_node;
+    if ((new_node = line_alloc()) == NULL) return;
+
+    new_node->buf = buffer_new(5);
+    if(lnode->next != NULL) {
+        Line *temp = lnode->next;
+        temp->prev = new_node;
+        lnode->next = new_node;
+        new_node->prev = lnode;
+        new_node->next = temp;
+    } else {
+        lnode->next = new_node;
+        new_node->prev = lnode;
+        new_node->next = NULL;
+    }
+
+    Ed.line = new_node;
 }
