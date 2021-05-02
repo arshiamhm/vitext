@@ -5,11 +5,13 @@
 #include <string.h>
 #include "editor.h"
 
+#define Linebuf Ed.line->buf
 
-struct editorconfig { int cx, cy;
+struct editorconfig {
+    int cx, cy;
     int screenrow;
     int screencol;
-    buffer *buf;
+    Line *line;
     int numrows;
 } Ed;
 
@@ -38,7 +40,8 @@ void initEditor() {
     Ed.cx = 0;
     Ed.cy = 0;
     Ed.numrows = 1; 
-    Ed.buf = buffer_new(3); 
+    /* Ed.buf = buffer_new(3); */ 
+    Ed.line = line_init();
     getmaxyx(stdscr, Ed.screenrow, Ed.screencol);
 }
 
@@ -88,16 +91,16 @@ void handle_cursor(int c) {
                 Ed.cy++;
             break;
         case KEY_RIGHT:
-            if (Ed.buf->postsize != 0)
+            if (Linebuf->postsize != 0)
                 if(Ed.cx != Ed.screencol - 1 ) {
                     Ed.cx++;
-                    buffer_forward(Ed.buf);
+                    buffer_forward(Linebuf);
                 }
                 break;
         case KEY_LEFT:
             if(Ed.cx != 0) { 
                 Ed.cx--;
-                buffer_backward(Ed.buf);
+                buffer_backward(Linebuf);
             }
             break;
     }
@@ -130,10 +133,10 @@ void keypress(WINDOW *win) {
         case 127:
         case '\b':
             if(Ed.cx != 0) 
-                handle_delete(Ed.buf);
+                handle_delete(Linebuf);
             break;
         default:
-            handle_insert(Ed.buf, ch);
+            handle_insert(Linebuf, ch);
             break;
     }
 

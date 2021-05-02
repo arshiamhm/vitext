@@ -88,3 +88,15 @@ void delete_char(buffer *b) {
         b->presize--;
 }
 
+Line* line_init(void) {
+    Line* head;
+    head = (Line *)malloc(sizeof(Line));
+    
+    if (head != NULL) {
+        head->buf = buffer_new(5);
+        head->prev = head->next = NULL;
+        return head;
+    }
+    
+    return NULL;
+}
