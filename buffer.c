@@ -124,3 +124,17 @@ void line_add(Line *lnode) {
 
     Ed.line = new_node;
 }
+
+void line_next(Line *lnode) {
+    if (lnode->next != NULL) {
+        Ed.line = lnode->next;
+    }
+    return;
+}
+
+void line_prev(Line *lnode) {
+    if (lnode->prev != NULL) {
+        Ed.line = lnode->prev;
+    }
+}
+

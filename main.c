@@ -77,10 +77,12 @@ void handle_cursor(int c) {
         case KEY_UP:
             if(Ed.cy != 0) 
                 Ed.cy--;
+                line_prev(Ed.line);
             break;
         case KEY_DOWN:
             if(Ed.cy != Ed.screenrow - 1)
                 Ed.cy++;
+                line_next(Ed.line);                
             break;
         case KEY_RIGHT:
             if (Linebuf->postsize != 0)
@@ -106,7 +108,7 @@ void handle_insert(buffer *b, char ch) {
 
 void handle_delete(buffer *b) {
     Ed.cx--;
-    move(0, Ed.cx);
+    move(Ed.cy, Ed.cx);
     delch();
     delete_char(b);
 }
@@ -126,6 +128,14 @@ void keypress(WINDOW *win) {
         case '\b':
             if(Ed.cx != 0) 
                 handle_delete(Linebuf);
+            break;
+        case KEY_ENTER:
+        case 10:
+            if (Linebuf->postsize == 0) {
+                line_add(Ed.line);
+                Ed.cy++;
+                Ed.cx = 0;
+            }
             break;
         default:
             handle_insert(Linebuf, ch);

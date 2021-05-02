@@ -41,6 +41,7 @@ void delete_char(buffer *b);
 
 Line* line_new(void);
 void line_add(Line *);
-
+void line_prev(Line *);
+void line_next(Line *);
 
 
