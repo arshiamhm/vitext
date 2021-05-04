@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define Linebuf Ed.line->buf
 
 typedef struct gap_buffer {
 	char *text; //a pointer to the start of our text;
@@ -35,6 +36,7 @@ buffer* buffer_new(size_t size);
 void buffer_expand(buffer *b);
 void buffer_forward(buffer* b);
 void buffer_backward(buffer* b);
+void mvgapto(buffer *b, int cx);
 void insert_char(buffer* b, char c);
 void delete_char(buffer *b);
 
@@ -43,5 +45,4 @@ Line* line_new(void);
 void line_add(Line *);
 void line_prev(Line *);
 void line_next(Line *);
-
 

@@ -13,21 +13,17 @@ struct text {
 
 int main(void) {
 
-    struct text *t;
-    t = (struct text *) malloc(sizeof(struct text));
-
-    t->b = (char *)malloc(sizeof(char) * 10);
-    strcpy(t->b, "byr");
-    t->b[3] = 'n';
-    t->size = 34;
-
-    int c;
-    while ((c = *t->b++) != '\0')
-        ;
+    char *array  = (char *)malloc(sizeof(char) * 8);
+    array[0] = 'h';
+    array[1] = 'e';
+    array[6] = 'g';
+    array[7] = 'o';
+    int start = 2;
+    int length = 0;
+    while(array[start++] == '\0')
+        length++;
     
-
-    printf("%s , %d\n", t->b, t->size);
-
+    printf("%d\n", length);
 
     return 0;
 }

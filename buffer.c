@@ -26,21 +26,10 @@ size_t gap_start(buffer *b) {
 }
 
 size_t gap_length(buffer *b) {
-    /* size_t pst = post_start(b); */
     return post_start(b) - b->presize;  
 }
 
-/* bool is_right(buffer *b) { */
-/*     return b->presize + gap_length(b) >= b->size; */
-/* } */
-
 void buffer_expand(buffer *b) {
-    
-    //allocate space double the size of the current buffer
-    //copy pre section to the new buffer
-    //get the post start index
-    //copy the post section
-    //deallocate the previous buffer
     size_t newsize = b->size * 2;
     size_t poststart = post_start(b);
     char *newbuf = (char *)malloc(sizeof(char) * newsize);
@@ -73,6 +62,23 @@ void buffer_backward(buffer *b) {
     b->text[post_start(b) - 1] = b->text[b->presize - 1];
     b->presize--;
     b->postsize++;
+}
+
+void mvgapto(buffer *b, int cx) {
+    //save the old poststart to a variable
+    //update the new presize 
+    //do a loop buf-text[i] != '\0'
+        //swap the presize and copy before the poststart index
+    size_t i, presize;
+    size_t poststart = post_start(b);
+    b->presize = presize = cx;
+    
+    i = 0;
+    while(b->text[presize] != '\0') {
+        b->text[poststart - 1] = b->text[presize++];
+        b->postsize++;
+        poststart--;
+    }
 }
 
 void insert_char(buffer *b, char c) {
@@ -122,19 +128,22 @@ void line_add(Line *lnode) {
         new_node->next = NULL;
     }
 
-    Ed.line = new_node;
+    line_next(lnode);
 }
 
 void line_next(Line *lnode) {
     if (lnode->next != NULL) {
         Ed.line = lnode->next;
     }
-    return;
+    if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) 
+        Ed.cx = Linebuf->presize;
 }
 
 void line_prev(Line *lnode) {
     if (lnode->prev != NULL) {
         Ed.line = lnode->prev;
     }
+    if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) 
+        Ed.cx = Linebuf->presize;
 }
 

@@ -5,7 +5,6 @@
 #include <string.h>
 #include "editor.h"
 
-#define Linebuf Ed.line->buf
 
 /* struct tempbuf { */
 /*     char *b; */
@@ -78,11 +77,13 @@ void handle_cursor(int c) {
             if(Ed.cy != 0) 
                 Ed.cy--;
                 line_prev(Ed.line);
+                mvgapto(Ed.line->buf, Ed.cx);
             break;
         case KEY_DOWN:
             if(Ed.cy != Ed.screenrow - 1)
                 Ed.cy++;
                 line_next(Ed.line);                
+                mvgapto(Ed.line->buf, Ed.cx);
             break;
         case KEY_RIGHT:
             if (Linebuf->postsize != 0)
@@ -99,6 +100,7 @@ void handle_cursor(int c) {
             break;
     }
 }
+
 
 void handle_insert(buffer *b, char ch) {
     Ed.cx++;
@@ -133,6 +135,7 @@ void keypress(WINDOW *win) {
         case 10:
             if (Linebuf->postsize == 0) {
                 line_add(Ed.line);
+                /* update_line(Ed.line->buf); */
                 Ed.cy++;
                 Ed.cx = 0;
             }
