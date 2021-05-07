@@ -65,25 +65,28 @@ void buffer_backward(buffer *b) {
 }
 
 void mvgapto(buffer *b, int cx) {
-    //save the old poststart to a variable
-    //update the new presize 
-    //do a loop buf-text[i] != '\0'
-        //swap the presize and copy before the poststart index
-    size_t i, presize;
-    size_t poststart = post_start(b);
-    b->presize = presize = cx;
-    
-    i = 0;
-    while(b->text[presize] != '\0') {
-        b->text[poststart - 1] = b->text[presize++];
-        b->postsize++;
-        poststart--;
+    //decide to move backward or forward or nothing
+    //do loop until the gapstart is in the desired position
+    int mvcount = 0;
+    size_t gapstart = gap_start(b);
+    mvcount = gapstart - cx;
+    //examine other ways of calculating mvcount
+    if(mvcount == 0) return;
+    if (mvcount > 0) {
+        while(mvcount-- > 0)
+            buffer_backward(b);
     }
+    else if(mvcount < 0) {
+        while(mvcount++ < 0 && b->postsize != 0)
+            buffer_forward(b);
+    } 
+
+    Ed.cx = Linebuf->presize;
 }
 
 void insert_char(buffer *b, char c) {
     size_t gaplen;
-    if ((gaplen = gap_length(b)) == 1) 
+    if ((gaplen = gap_length(b)) <= 1) 
         buffer_expand(b);
     b->text[gap_start(b)] = c;
     b->presize++;
@@ -135,15 +138,15 @@ void line_next(Line *lnode) {
     if (lnode->next != NULL) {
         Ed.line = lnode->next;
     }
-    if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) 
-        Ed.cx = Linebuf->presize;
+    /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
+    /*     Ed.cx = Linebuf->presize; */
 }
 
 void line_prev(Line *lnode) {
     if (lnode->prev != NULL) {
         Ed.line = lnode->prev;
     }
-    if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) 
-        Ed.cx = Linebuf->presize;
+    /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
+    /*     Ed.cx = Linebuf->presize; */
 }
 

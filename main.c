@@ -161,7 +161,6 @@ int main(){
     /* file_open(); */
     /* drawRows(); */
     while (1){
-        /* refresh_screen(); */
         keypress(stdscr); 
     }
 
