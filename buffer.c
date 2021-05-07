@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "editor.h"
+#include <ncurses.h>
 
 
 buffer* buffer_new(size_t size) {
@@ -125,6 +126,7 @@ void line_add(Line *lnode) {
         lnode->next = new_node;
         new_node->prev = lnode;
         new_node->next = temp;
+        /* move(1,0); */
     } else {
         lnode->next = new_node;
         new_node->prev = lnode;
@@ -137,6 +139,7 @@ void line_add(Line *lnode) {
 void line_next(Line *lnode) {
     if (lnode->next != NULL) {
         Ed.line = lnode->next;
+        Ed.cy++;
     }
     /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
     /*     Ed.cx = Linebuf->presize; */

@@ -80,10 +80,10 @@ void handle_cursor(int c) {
                 mvgapto(Ed.line->buf, Ed.cx);
             break;
         case KEY_DOWN:
-            if(Ed.cy != Ed.screenrow - 1)
-                Ed.cy++;
+            if(Ed.cy != Ed.screenrow - 1) {
                 line_next(Ed.line);                
                 mvgapto(Ed.line->buf, Ed.cx);
+            }
             break;
         case KEY_RIGHT:
             if (Linebuf->postsize != 0)
@@ -135,9 +135,9 @@ void keypress(WINDOW *win) {
         case 10:
             if (Linebuf->postsize == 0) {
                 line_add(Ed.line);
-                /* update_line(Ed.line->buf); */
-                Ed.cy++;
                 Ed.cx = 0;
+                move(Ed.cy, Ed.cx);
+                insertln();
             }
             break;
         default:
