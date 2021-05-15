@@ -76,14 +76,17 @@ void handle_cursor(int c) {
         case KEY_UP:
             if(Ed.cy != 0) 
                 Ed.cy--;
-                line_prev(Ed.line);
+                line_prev();
                 mvgapto(Ed.line->buf, Ed.cx);
             break;
         case KEY_DOWN:
-            if(Ed.cy != Ed.screenrow - 1)
-                Ed.cy++;
-                line_next(Ed.line);                
-                mvgapto(Ed.line->buf, Ed.cx);
+            if(Ed.cy != Ed.screenrow - 1) {
+                if(Ed.line->next != NULL) {
+                    Ed.cy++;
+                    line_next();                
+                    mvgapto(Ed.line->buf, Ed.cx);
+            } 
+        }
             break;
         case KEY_RIGHT:
             if (Linebuf->postsize != 0)
@@ -109,12 +112,12 @@ void handle_insert(buffer *b, char ch) {
 }   
 
 void handle_delete(buffer *b) {
+    if(Ed.cx == 0) return;
     Ed.cx--;
     move(Ed.cy, Ed.cx);
     delch();
     delete_char(b);
 }
-
 void keypress(WINDOW *win) {
     int ch = getch();
 
@@ -128,16 +131,20 @@ void keypress(WINDOW *win) {
         case KEY_BACKSPACE:
         case 127:
         case '\b':
-            if(Ed.cx != 0) 
+            if (isempty(Linebuf) && Ed.line->prev != NULL) {
+                deleteln();
+                line_delete(Ed.line);
+            } else 
                 handle_delete(Linebuf);
             break;
         case KEY_ENTER:
         case 10:
             if (Linebuf->postsize == 0) {
                 line_add(Ed.line);
-                /* update_line(Ed.line->buf); */
-                Ed.cy++;
                 Ed.cx = 0;
+                handle_cursor(KEY_DOWN);
+                move(Ed.cy, Ed.cx);
+                insertln();
             }
             break;
         default:

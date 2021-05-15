@@ -24,25 +24,28 @@ struct editorconfig {
 	Line *line;
 	int numrows;
 } Ed;
-// struct editorconfig Ed;
 
-//gap utility functions
+void handle_cursor(int);
+//Gap utility functions
 size_t gap_length(buffer *b);
 size_t post_start(buffer *b);
 size_t gap_start(buffer *b);
 
-//gap manipulation functions
+//Gap manipulation functions
 buffer* buffer_new(size_t size);
 void buffer_expand(buffer *b);
 void buffer_forward(buffer* b);
 void buffer_backward(buffer* b);
 void mvgapto(buffer *b, int cx);
+bool isempty(buffer *b);
 void insert_char(buffer* b, char c);
 void delete_char(buffer *b);
 
 
+//Line manipulation functions
 Line* line_new(void);
 void line_add(Line *);
-void line_prev(Line *);
-void line_next(Line *);
-
+void line_prev();
+void line_next();
+void line_delete(Line *);
+void line_split(Line *);

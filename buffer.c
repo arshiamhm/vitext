@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "editor.h"
+#include <ncurses.h>
 
 
 buffer* buffer_new(size_t size) {
@@ -62,6 +63,12 @@ void buffer_backward(buffer *b) {
     b->text[post_start(b) - 1] = b->text[b->presize - 1];
     b->presize--;
     b->postsize++;
+}
+
+    
+
+bool isempty(buffer *b) {
+    return gap_length(b) == b->size;
 }
 
 void mvgapto(buffer *b, int cx) {
@@ -125,28 +132,49 @@ void line_add(Line *lnode) {
         lnode->next = new_node;
         new_node->prev = lnode;
         new_node->next = temp;
+        /* move(1,0); */
     } else {
         lnode->next = new_node;
         new_node->prev = lnode;
         new_node->next = NULL;
     }
-
-    line_next(lnode);
 }
 
-void line_next(Line *lnode) {
-    if (lnode->next != NULL) {
-        Ed.line = lnode->next;
+void line_next() {
+    if (Ed.line->next != NULL) {
+        Ed.line = Ed.line->next;
     }
     /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
     /*     Ed.cx = Linebuf->presize; */
 }
 
-void line_prev(Line *lnode) {
-    if (lnode->prev != NULL) {
-        Ed.line = lnode->prev;
-    }
-    /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
-    /*     Ed.cx = Linebuf->presize; */
-}
+void line_prev() {
+    if (Ed.line->prev != NULL) 
+        Ed.line = Ed.line->prev;
+} 
 
+void line_delete(Line *lnode) {
+    Line *nextnode, *prevnode;
+
+    Ed.cx = lnode->prev->buf->presize;
+    if(lnode->next != NULL) {
+        nextnode = lnode->next;
+        prevnode = lnode->prev;
+
+        prevnode->next = nextnode;
+        nextnode->prev = prevnode;
+
+    } else if(lnode->next == NULL) {
+        prevnode = lnode->prev;
+        prevnode->next = NULL;
+    } else
+        return;
+
+    free(lnode->buf->text);
+    free(lnode->buf);
+    free(lnode);
+    handle_cursor(KEY_UP);
+    lnode->next = NULL;
+    lnode->prev = NULL;
+
+}
