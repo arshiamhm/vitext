@@ -65,6 +65,12 @@ void buffer_backward(buffer *b) {
     b->postsize++;
 }
 
+    
+
+bool isempty(buffer *b) {
+    return gap_length(b) == b->size;
+}
+
 void mvgapto(buffer *b, int cx) {
     //decide to move backward or forward or nothing
     //do loop until the gapstart is in the desired position
@@ -132,24 +138,43 @@ void line_add(Line *lnode) {
         new_node->prev = lnode;
         new_node->next = NULL;
     }
-
-    line_next(lnode);
 }
 
-void line_next(Line *lnode) {
-    if (lnode->next != NULL) {
-        Ed.line = lnode->next;
-        Ed.cy++;
+void line_next() {
+    if (Ed.line->next != NULL) {
+        Ed.line = Ed.line->next;
     }
     /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
     /*     Ed.cx = Linebuf->presize; */
 }
 
-void line_prev(Line *lnode) {
-    if (lnode->prev != NULL) {
-        Ed.line = lnode->prev;
-    }
-    /* if(Linebuf->postsize == 0 && Ed.cx > Linebuf->presize) */ 
-    /*     Ed.cx = Linebuf->presize; */
-}
+void line_prev() {
+    if (Ed.line->prev != NULL) 
+        Ed.line = Ed.line->prev;
+} 
 
+void line_delete(Line *lnode) {
+    Line *nextnode, *prevnode;
+
+    Ed.cx = lnode->prev->buf->presize;
+    if(lnode->next != NULL) {
+        nextnode = lnode->next;
+        prevnode = lnode->prev;
+
+        prevnode->next = nextnode;
+        nextnode->prev = prevnode;
+
+    } else if(lnode->next == NULL) {
+        prevnode = lnode->prev;
+        prevnode->next = NULL;
+    } else
+        return;
+
+    free(lnode->buf->text);
+    free(lnode->buf);
+    free(lnode);
+    handle_cursor(KEY_UP);
+    lnode->next = NULL;
+    lnode->prev = NULL;
+
+}
